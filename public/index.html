@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bankroll Book</title>
+<style>
+:root{--bg:#0a0f16;--panel:#111923;--p2:#17222f;--line:#223142;--ink:#e6edf4;--mute:#8697a9;--acc:#4f8cff;--accink:#fff;--H:#e5484d;--A:#4f8cff;--D:#d9a441;--win:#34d399;--loss:#f87171;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+:root[data-theme="light"]{--bg:#f1f4f8;--panel:#fff;--p2:#eef2f7;--line:#d6dee8;--ink:#101a26;--mute:#5d6e80;--acc:#2563eb;--H:#d02f3a;--A:#2563eb;--D:#b7791f;--win:#047857;--loss:#b91c1c;color-scheme:light}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1{font-size:1.05rem;margin:0;letter-spacing:.3px}
+h2{font-size:.75rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--mute);margin:0 0 12px;font-weight:600}
+header{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:4}
+.bar{max-width:1040px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px;justify-content:space-between}
+nav{display:flex;gap:2px}nav button{background:none;border:0;color:var(--mute);font:inherit;font-weight:600;padding:8px 14px;border-radius:8px;cursor:pointer}
+nav button.on{background:var(--p2);color:var(--ink)}nav i{display:none;font-style:normal}
+.wrap{max-width:1040px;margin:0 auto;padding:16px}.pg{display:none}.pg.on{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.two{display:grid;gap:14px}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+@media(min-width:860px){.stats{grid-template-columns:repeat(4,1fr)}.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}.stat small{display:block}.stat b{font-size:1.2rem;font-variant-numeric:tabular-nums}
+.big{font-size:1.8rem;font-weight:700;font-variant-numeric:tabular-nums}
+.track{height:8px;background:var(--p2);border-radius:9px;overflow:hidden;margin:8px 0}.track i{display:block;height:100%;background:var(--acc);transition:width .5s}
+label{display:block;font-size:.8rem;color:var(--mute);margin:10px 0 4px}
+input,select,textarea{font:inherit;color:var(--ink);width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--p2)}
+.btn{font:inherit;font-weight:600;color:var(--accink);background:var(--acc);border:0;border-radius:8px;padding:11px 14px;cursor:pointer;width:100%;margin-top:12px}
+.btn.o{background:var(--p2);color:var(--ink);border:1px solid var(--line)}.btn.sm{width:auto;margin:0;padding:6px 12px;font-size:.85rem}
+button.x{background:none;border:0;color:var(--mute);cursor:pointer;font-size:1rem;padding:2px 8px}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.rk button,.sd button{font:inherit;font-weight:700;color:var(--ink);background:var(--p2);border:1px solid var(--line);border-radius:8px;padding:9px 0;cursor:pointer}
+#hk button.on{background:var(--H);border-color:var(--H);color:#fff}#ak button.on{background:var(--A);border-color:var(--A);color:#fff}
+.sd{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.sd button.on{background:var(--acc);border-color:var(--acc);color:var(--accink)}
+.sd button[data-b="H"].on{background:var(--H)}.sd button[data-b="A"].on{background:var(--A)}.sd button[data-b="D"].on{background:var(--D);color:#101010}
+.prev{margin-top:12px;padding:10px;border-radius:8px;background:var(--p2);text-align:center;font-weight:700;min-height:42px}
+.sp{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.sp div{border-radius:10px;padding:10px;text-align:center;background:var(--p2);border-top:3px solid}
+.sp b{display:block;font-size:1.6rem;font-variant-numeric:tabular-nums}.sp small{display:block}
+.road{display:grid;grid-template-columns:repeat(9,1fr);gap:5px}
+.c{aspect-ratio:1.3;display:grid;place-items:center;border-radius:6px;font-weight:700;font-size:.85rem;color:#fff}
+.cH{background:var(--H)}.cA{background:var(--A)}.cD{background:var(--D);color:#101010}
+.ranks{display:grid;grid-template-columns:repeat(13,1fr);gap:4px;text-align:center;font-size:.8rem}
+.ranks div{background:var(--p2);border-radius:6px;padding:4px 0}.ranks b{display:block}.ranks .mx{background:var(--acc);color:var(--accink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.per{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.per div{background:var(--p2);border-radius:10px;padding:10px}.per b{display:block;font-size:1.1rem;font-variant-numeric:tabular-nums}.per small{display:block}
+.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal .h{text-align:center;font-size:.7rem;color:var(--mute);padding:2px 0}
+.cal .d{aspect-ratio:1;border-radius:8px;background:var(--p2);padding:3px 4px;font-size:.72rem;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;border:1px solid transparent;min-width:0;overflow:hidden}
+.cal .d:hover,.cal .d.to{border-color:var(--acc)}.cal .d b{font-size:.66rem;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}.cal .e0{visibility:hidden}
+#tip{position:fixed;z-index:8;pointer-events:none;background:var(--ink);color:var(--bg);padding:10px 12px;border-radius:10px;font-size:.82rem;line-height:1.5;max-width:240px;display:none;box-shadow:0 6px 24px #0006}
+.bars div{display:grid;grid-template-columns:34px 1fr 110px;gap:8px;align-items:center;font-size:.8rem;margin:4px 0}.bars i{display:block;height:8px;border-radius:9px}
+.fn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}.fn div{background:var(--p2);border-radius:10px;padding:8px 10px}.fn small{display:block}.fn b{font-variant-numeric:tabular-nums}
+@media(max-width:520px){.per{grid-template-columns:1fr}}.pk{display:flex;align-items:center;gap:14px;margin-bottom:12px}.pk .c{width:64px;aspect-ratio:1;font-size:1.6rem;border-radius:12px}
+.pb{display:grid;grid-template-columns:60px 1fr 44px;gap:8px;align-items:center;font-size:.85rem;margin:4px 0}.pb i{display:block;height:8px;border-radius:9px}.pb span:last-child{text-align:right}
+.tb{width:100%;border-collapse:collapse;font-size:.85rem}.tb th,.tb td{padding:6px 4px;text-align:right;border-top:1px solid var(--line)}.tb th:first-child,.tb td:first-child{text-align:left}.tb th{color:var(--mute);font-weight:600;border:0}.tb tr.on td:first-child{color:var(--acc);font-weight:700}
+.note{background:var(--p2);border-radius:8px;padding:10px;font-size:.82rem;margin:10px 0}.lp{display:flex;gap:4px;flex-wrap:wrap;margin:6px 0 14px}.lp span{padding:2px 8px;border-radius:99px;font-size:.75rem;background:var(--p2)}.lp .ok{color:var(--win)}.lp .no{color:var(--loss)}
+.goal{padding:10px 0;border-top:1px solid var(--line)}.goal:first-of-type{border-top:0}.gh{display:flex;justify-content:space-between}
+.day{border-top:1px solid var(--line);padding:10px 0}.day:first-of-type{border-top:0}.dh{display:flex;justify-content:space-between;font-weight:600}
+.e{display:flex;gap:8px;align-items:center;padding:6px 0}.e .t{flex:0 0 66px;font-size:.72rem;padding:2px 6px;border-radius:99px;background:var(--p2);text-align:center}
+.e .m{flex:1;min-width:0}.e .m small{display:block;overflow-wrap:anywhere}.e .a{font-weight:600;font-variant-numeric:tabular-nums}
+.win{color:var(--win)}.loss{color:var(--loss)}.empty,small{color:var(--mute)}
+.demo{background:var(--p2);color:var(--mute);font-size:.75rem;padding:3px 10px;border-radius:99px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,160px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:600;transition:transform .3s;z-index:6}#toast.on{transform:translate(-50%,0)}
+@media(max-width:699px){header{position:static}.bar{flex-wrap:wrap}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--panel);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));justify-content:space-around}
+nav button{display:flex;flex-direction:column;align-items:center;font-size:.7rem;padding:6px 8px}nav i{display:block;font-size:1.25rem}
+.wrap{padding-bottom:90px}#toast{bottom:90px}}
+body.share nav,body.share .ns{display:none}body.share .pg{display:none}body.share #p-table{display:block}body.share{font-size:18px}
+body.share .wrap{padding-bottom:16px}body.share .sp b{font-size:2.6rem}body.share .two{grid-template-columns:1fr}
+</style></head><body>
+<header><div class="bar"><h1>▲ BANKROLL BOOK</h1>
+<nav id="nav"><button data-n="home"><i>🏠</i>Overview</button><button data-n="table"><i>🎴</i>Table</button><button data-n="ledger"><i>📖</i>Ledger</button><button data-n="goals"><i>🏁</i>Goals</button><button data-n="set"><i>⚙️</i>Settings</button></nav>
+<span><span class="demo" id="demo" hidden>Preview: sample data</span> <button class="btn sm o" id="th">Theme</button> <button class="btn sm" id="sh">Share view</button></span></div></header>
+<div class="wrap">
+
+<section class="pg" id="p-home"><div class="card"><h2>Road to the big goal</h2><div class="big" id="hp"></div><div class="track"><i id="hb"></i></div><small id="hs"></small></div>
+<div class="stats" id="stats"></div><div class="card"><h2>Today</h2><div id="today"></div></div>
+<div class="card"><h2>Daily, weekly and monthly</h2><div class="per" id="per"></div></div>
+<div class="two"><div class="card"><div class="ch"><h2 style="margin:0" id="cm"></h2><span><button class="btn sm o" id="cp" aria-label="Previous month">‹</button> <button class="btn sm o" id="cn" aria-label="Next month">›</button></span></div><div class="cal" id="cal"></div><small style="display:block;margin-top:10px">Hover or tap a day for its stats. Green is a winning day, red a losing day.</small></div>
+<div class="card"><h2>Highlights</h2><div id="fun"></div></div></div><div id="tip"></div></section>
+
+<section class="pg" id="p-table"><div class="two">
+<div class="card ns"><h2>Enter a round</h2>
+<label>Home card</label><div class="rk" id="hk"></div>
+<label>Away card</label><div class="rk" id="ak"></div>
+<div class="prev" id="prev">Pick both cards</div>
+<label>Your bet (optional)</label><div class="sd" id="sd"><button data-b="">None</button><button data-b="H">Home</button><button data-b="A">Away</button><button data-b="D">Draw</button></div>
+<div class="row2"><div><label for="rs">Stake (G$)</label><input id="rs" class="mi" type="text" inputmode="decimal" autocomplete="off"></div><div><label for="rw">Who</label><select id="rw"><option>Me</option><option>Wife</option></select></div></div>
+<label for="rn">Note</label><input id="rn" placeholder="Optional">
+<button class="btn" id="save">Save round</button>
+<div class="row2"><button class="btn o" id="undo">Undo last round</button><button class="btn o" id="clr">New day</button></div><small id="rcount"></small></div>
+<div class="card"><h2>Next round</h2><div id="pr"></div></div>
+<div class="card"><h2>Shoe tracker</h2><div id="shoe"></div></div>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2 style="margin:0">Table stats</h2>
+<select id="win" style="width:auto"><option value="10">Last 10 rounds</option><option value="20" selected>Last 20 rounds</option><option value="50">Last 50 rounds</option><option value="100">Last 100 rounds</option><option value="m30">Last 30 min</option><option value="m60">Last hour</option><option value="today">Today</option><option value="all">All time</option></select></div>
+<div class="sp" id="sp" style="margin-top:12px"></div>
+<h2>Results (newest first)</h2><div class="road" id="road"></div>
+<h2 style="margin-top:16px">Cards seen (both sides)</h2><div class="ranks" id="rks"></div>
+<h2 style="margin-top:16px">Streaks</h2><div id="stk"></div>
+<small style="display:block;margin-top:12px">Each round is a fresh shuffle, so streaks and counts describe the past only.</small></div>
+<div class="card"><h2>Scoreboard</h2><div id="sb"></div></div></div></section>
+
+<section class="pg" id="p-ledger"><div class="two"><div class="card"><h2>Deposit, cash out or adjustment</h2>
+<div class="row2"><div><label for="d">Date</label><input id="d" type="date"></div><div><label for="w">Who</label><select id="w"><option>Me</option><option>Wife</option></select></div></div>
+<div class="row2"><div><label for="t">Type</label><select id="t"><option value="deposit">Deposit to account</option><option value="cashout">Cash out</option><option value="win">Win</option><option value="loss">Loss</option></select></div>
+<div><label for="a">Amount (G$)</label><input id="a" class="mi" type="text" inputmode="decimal" autocomplete="off"></div></div>
+<div id="gw" hidden><label for="g">Cash out toward goal</label><select id="g"></select></div>
+<label for="n">Note</label><textarea id="n" rows="2" placeholder="Anything to remember"></textarea><button class="btn" id="add">Save entry</button></div>
+<div class="card"><h2>Daily log</h2><div id="log"></div></div></div></section>
+
+<section class="pg" id="p-goals"><div class="card"><h2>Goals</h2><div id="goals"></div>
+<div class="row2"><div><label for="gn">New goal</label><input id="gn" placeholder="House deposit"></div><div><label for="gt">Target (G$)</label><input id="gt" class="mi" type="text" inputmode="decimal" autocomplete="off"></div></div>
+<button class="btn" id="addg">Add goal</button></div></section>
+
+<section class="pg" id="p-set"><div class="card"><h2>Settings</h2>
+<label for="s1">Total to reach (G$)</label><input id="s1" class="mi" type="text" inputmode="decimal">
+<div class="row2"><div><label for="s2">Weekday target</label><input id="s2" class="mi" type="text" inputmode="decimal"></div><div><label for="s3">Weekend target</label><input id="s3" class="mi" type="text" inputmode="decimal"></div></div>
+<div class="row2"><div><label for="s4">Home/Away bet on a Draw (x stake)</label><input id="s4" type="number" step="0.1"></div><div><label for="s5">Draw bet pays (x stake)</label><input id="s5" type="number" step="0.1"></div></div>
+<label for="s6">Ace counts as</label><select id="s6"><option value="high">High (above King)</option><option value="low">Low (below 2)</option></select>
+<div class="row2"><div><label for="s7">Decks in the shoe</label><input id="s7" type="number" min="1" max="12"></div><div><label for="s8">Shuffle</label><select id="s8"><option value="manual">Only when I press New shoe</option><option value="round">After every round</option></select></div></div>
+<button class="btn" id="sv">Save settings</button></div></section>
+</div><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),D={total:70000000,wk:100000,we:200000,draw:-0.5,drawpay:11,ace:'high',decks:10,shuf:'manual',tstart:0},RK='2 3 4 5 6 7 8 9 10 J Q K A'.split(' ');
+let demo=false,goals=[],entries=[],cfg={...D},hc='',ac='',bet='';
+const money=n=>(n<0?'-':'')+'G$'+Math.abs(Math.round(n)).toLocaleString();
+const iso=o=>{const d=new Date(Date.now()-o*864e5);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pl=e=>e.type==='win'?e.amount:e.type==='loss'?-e.amount:0,NM={H:'Home',A:'Away',D:'Draw'};
+const val=r=>r==='A'?(cfg.ace==='low'?1:14):RK.indexOf(r)+1;
+const outc=(h,a)=>val(h)>val(a)?'H':val(a)>val(h)?'A':'D';
+function mk(h,a,b,st,who,note,ts,date){const res=outc(h,a);let ty='round',am=0;
+if(b&&st>0){const v=res===b?(b==='D'?st*cfg.drawpay:st):res==='D'?st*cfg.draw:-st;ty=v>=0?'win':'loss';am=Math.abs(v)}
+return{date,ts,who,type:ty,amount:am,home:h,away:a,res,bet:b&&st>0?b:'',stake:st,note}}
+function show(n){if(!$('#p-'+n))n='home';document.querySelectorAll('.pg').forEach(p=>p.classList.toggle('on',p.id==='p-'+n));
+document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.n===n));try{history.replaceState(null,'','#'+n)}catch(e){}scrollTo(0,0)}
+function seed(){let x=7;const r=()=>(x=x*16807%2147483647)/2147483647,pk=()=>RK[Math.floor(r()*13)];
+goals=[{_id:'g1',name:'House deposit',target:25000000},{_id:'g2',name:'Car',target:8000000}];entries=[];
+for(let i=0;i<36;i++){const b=r()<.5?'HAD'[Math.floor(r()*2.2)]:'';entries.push({...mk(pk(),pk(),b,50000,'Me','',Date.now()-i*4*6e4,iso(i<20?0:1)),_id:'r'+i})}
+entries.push({_id:'e1',date:iso(1),ts:1,who:'Me',type:'deposit',amount:500000,note:'First top-up'},{_id:'e2',date:iso(1),ts:2,who:'Wife',type:'cashout',amount:150000,goalId:'g1',note:'Sent to bank'})}
+function local(m,p,b){const[k,id]=p.split('/');if(k==='settings'){if(m==='PUT')cfg={...b};return cfg}
+const L=k==='goals'?goals:entries;if(m==='GET')return L;if(m==='POST'){L.push({...b,_id:'d'+Math.random().toString(36).slice(2)});return{}}
+const i=L.findIndex(y=>y._id===id);if(i>-1)L.splice(i,1);return{}}
+async function api(m,p,b){if(!demo){try{const r=await fetch('/api/'+p,{method:m,headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined});
+if(!r.ok||!(r.headers.get('content-type')||'').includes('json'))throw 0;return await r.json()}catch(e){if(m!=='GET')throw e;demo=true;seed();$('#demo').hidden=false}}return local(m,p,b)}
+async function load(){goals=await api('GET','goals');entries=await api('GET','entries');const c=await api('GET','settings');cfg={...D,...c};delete cfg._id;render()}
+function toast(t){const e=$('#toast');e.textContent=t;e.className='on';setTimeout(()=>e.className='',2200)}
+const tsOf=e=>e.ts||0,tm=e=>new Date(tsOf(e)).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+function render(){
+const s=t=>entries.filter(e=>e.type===t).reduce((a,e)=>a+e.amount,0);
+renderPred();renderOv();const dep=s('deposit'),out=s('cashout'),net=entries.reduce((a,e)=>a+pl(e),0),bal=dep-out+net;
+const pct=Math.max(0,Math.min(100,net/cfg.total*100)),left=Math.max(0,cfg.total-net),avg=(5*cfg.wk+2*cfg.we)/7;
+$('#hp').textContent=money(net)+' of '+money(cfg.total);$('#hb').style.width=pct+'%';
+$('#hs').textContent=pct.toFixed(1)+'% there. '+money(left)+' to go, about '+Math.ceil(left/avg).toLocaleString()+' days at your daily targets.';
+$('#stats').innerHTML=[['Account balance',bal],['Net wins/losses',net],['Total deposited',dep],['Total cashed out',out]].map(([l,v])=>`<div class="stat"><small>${l}</small><b class="${l[0]=='N'?(v>=0?'win':'loss'):''}">${money(v)}</b></div>`).join('');
+const dn=new Date().getDay(),we=dn==0||dn==6,tg=we?cfg.we:cfg.wk,tn=entries.filter(e=>e.date===iso(0)).reduce((a,e)=>a+pl(e),0),tp=Math.max(0,Math.min(100,tn/tg*100));
+$('#today').innerHTML=`<small>${we?'Weekend':'Weekday'} target ${money(tg)}</small><div class="big ${tn>=0?'win':'loss'}">${money(tn)}</div><div class="track"><i style="width:${tp}%"></i></div><small>${tn>=tg?'Target hit. Time to stop and bank it.':money(tg-tn)+' left for today'}</small>`;
+$('#hk').innerHTML=RK.map(r=>`<button data-h="${r}" class="${r==hc?'on':''}">${r}</button>`).join('');
+$('#ak').innerHTML=RK.map(r=>`<button data-a="${r}" class="${r==ac?'on':''}">${r}</button>`).join('');
+document.querySelectorAll('#sd button').forEach(b=>b.classList.toggle('on',b.dataset.b===bet));
+$('#prev').innerHTML=hc&&ac?`Home ${hc} vs Away ${ac}: <span style="color:var(--${outc(hc,ac)})">${outc(hc,ac)=='D'?'Draw':NM[outc(hc,ac)]+' wins'}</span>`:'Pick both cards';
+const all=entries.filter(e=>e.res&&inSess(e)).sort((a,b)=>tsOf(b)-tsOf(a)),w=$('#win').value,now=Date.now();
+const R=/^\d+$/.test(w)?all.slice(0,+w):w==='all'?all:w==='today'?all.filter(e=>e.date===iso(0)):all.filter(e=>now-tsOf(e)<=+w.slice(1)*6e4);
+const c={H:0,A:0,D:0};R.forEach(e=>c[e.res]++);const n=R.length||1;
+$('#sp').innerHTML=['H','A','D'].map(k=>`<div style="border-color:var(--${k})"><small>${NM[k]}</small><b>${c[k]}</b><small>${Math.round(c[k]/n*100)}%</small></div>`).join('');
+$('#road').innerHTML=all.slice(0,27).map(e=>`<span class="c c${e.res}">${e.res}</span>`).join('')||'<small>No rounds yet</small>';
+const rc={};RK.forEach(r=>rc[r]=0);R.forEach(e=>{rc[e.home]++;rc[e.away]++});const mx=Math.max(...Object.values(rc));
+$('#rks').innerHTML=RK.map(r=>`<div class="${rc[r]==mx&&mx>0?'mx':''}">${r}<b>${rc[r]}</b></div>`).join('');
+let run=0;for(const e of R){if(e.res===R[0].res)run++;else break}
+const sd=R.findIndex(e=>e.res==='D'),sh=R.findIndex(e=>e.res==='H'),sa=R.findIndex(e=>e.res==='A'),g=i=>i<0?'none in window':i+' rounds ago';
+$('#stk').innerHTML=R.length?`<small>Current: <b style="color:var(--ink)">${run} in a row of ${NM[R[0].res]}</b><br>Last Home: ${g(sh)} · Last Away: ${g(sa)} · Last Draw: ${g(sd)}</small>`:'<small>No rounds in this window</small>';
+$('#s1').value=cfg.total.toLocaleString();$('#s2').value=cfg.wk.toLocaleString();$('#s3').value=cfg.we.toLocaleString();$('#s4').value=cfg.draw;$('#s5').value=cfg.drawpay;$('#s6').value=cfg.ace;$('#s7').value=cfg.decks;$('#s8').value=cfg.shuf;
+$('#g').innerHTML=goals.map(x=>`<option value="${x._id}">${esc(x.name)}</option>`).join('')||'<option value="">No goal</option>';
+$('#goals').innerHTML=goals.map(x=>{const got=entries.filter(e=>e.type==='cashout'&&e.goalId===x._id).reduce((a,e)=>a+e.amount,0),p=Math.min(100,got/x.target*100||0);
+return`<div class="goal"><div class="gh"><b>${esc(x.name)}</b><button class="x" data-g="${x._id}" aria-label="Delete goal">✕</button></div><div class="track"><i style="width:${p}%"></i></div><small>${money(got)} of ${money(x.target)} (${p.toFixed(0)}%), ${money(Math.max(0,x.target-got))} to go</small></div>`}).join('')||'<p class="empty">Add your first goal below.</p>';
+const days={};entries.forEach(e=>(days[e.date]=days[e.date]||[]).push(e));const lab={win:'Win',loss:'Loss',deposit:'Deposit',cashout:'Cash out',round:'Round',shuffle:'Shuffle'};
+$('#log').innerHTML=Object.keys(days).sort().reverse().map(d=>{const L=days[d].sort((a,b)=>tsOf(b)-tsOf(a)),nt=L.reduce((a,e)=>a+pl(e),0);
+return`<div class="day"><div class="dh"><span>${new Date(d+'T00:00').toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</span><span class="${nt>=0?'win':'loss'}">${money(nt)}</span></div>`+
+L.map(e=>{const gl=goals.find(x=>x._id===e.goalId),x=e.res?`Home ${e.home} v Away ${e.away}: ${NM[e.res]}${e.bet?' · bet '+NM[e.bet]+' '+money(e.stake):''}`:[e.who,gl?'→ '+gl.name:''].filter(Boolean).join(' · ');
+return`<div class="e"><span class="t">${lab[e.type]}</span><div class="m">${esc(x)}${e.note?`<small>${esc(e.note)}</small>`:e.res&&e.ts>9e9?`<small>${tm(e)} · ${esc(e.who)}</small>`:''}</div><span class="a ${e.type=='win'?'win':e.type=='loss'?'loss':''}">${e.type=='round'||e.type=='shuffle'?'':money(e.amount)}</span><button class="x" data-e="${e._id}" aria-label="Delete entry">✕</button></div>`}).join('')+'</div>'}).join('')||'<p class="empty">No entries yet.</p>'}
+$('#nav').onclick=e=>{const b=e.target.closest('[data-n]');if(b)show(b.dataset.n)};
+$('#t').onchange=()=>$('#gw').hidden=$('#t').value!=='cashout';$('#win').onchange=render;
+$('#th').onclick=()=>{const r=document.documentElement;r.dataset.theme=r.dataset.theme==='light'?'dark':'light'};
+$('#sh').onclick=()=>{const on=document.body.classList.toggle('share');$('#sh').textContent=on?'Exit share view':'Share view';if(on)show('table')};
+document.addEventListener('click',async ev=>{const t=ev.target;
+if(t.dataset.h){hc=t.dataset.h;return pick()}if(t.dataset.a){ac=t.dataset.a;return pick()}
+if(t.id==='predict'){pstart=seqNow().length;sv();return render()}if(t.id==='pstop'){pstart=-1;sv();return render()}if(t.id==='nsh'){await api('POST','entries',{date:iso(0),ts:Date.now(),who:'Me',type:'shuffle',amount:0,note:'New shoe'});toast('New shoe: card count reset');return load()}if(t.dataset.use){bet=t.dataset.use;toast('Bet side set');return render()}
+if(t.closest('#sd')&&t.dataset.b!==undefined){bet=t.dataset.b;return render()}
+const b=t.closest('.x');if(!b)return;if(!b.dataset.arm){b.dataset.arm=1;b.textContent='Sure?';setTimeout(()=>{b.dataset.arm='';b.textContent='✕'},3000);return}await api('DELETE',b.dataset.e?'entries/'+b.dataset.e:'goals/'+b.dataset.g);load()});
+$('#save').onclick=saveRound;async function saveRound(){if(!hc||!ac)return toast('Pick both cards');const st=num('#rs')||0;
+if(bet&&!(st>0))return $('#rs').focus();const e=mk(hc,ac,bet,st,$('#rw').value,$('#rn').value.trim(),Date.now(),iso(0));
+await api('POST','entries',e);toast(NM[e.res]+(e.type=='round'?' saved':(e.type=='win'?' · won ':' · lost ')+money(e.amount)));hc=ac='';$('#rn').value='';load()}
+$('#add').onclick=async()=>{const a=num('#a');if(!(a>0))return $('#a').focus();
+const e={date:$('#d').value||iso(0),ts:Date.now(),who:$('#w').value,type:$('#t').value,amount:a,note:$('#n').value.trim()};
+if(e.type==='cashout'&&$('#g').value)e.goalId=$('#g').value;await api('POST','entries',e);$('#a').value=$('#n').value='';toast('Entry saved');load()};
+$('#addg').onclick=async()=>{const t=num('#gt'),n=$('#gn').value.trim();if(!n||!(t>0))return;await api('POST','goals',{name:n,target:t});$('#gn').value=$('#gt').value='';load()};
+$('#sv').onclick=async()=>{await api('PUT','settings',{...cfg,total:num('#s1')||D.total,wk:num('#s2')||D.wk,we:num('#s3')||D.we,draw:+$('#s4').value,drawpay:+$('#s5').value||11,ace:$('#s6').value,decks:Math.max(1,Math.min(12,+$('#s7').value||10)),shuf:$('#s8').value});toast('Settings saved');load()};
+const ds=(y,m,d)=>y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'),cmp=n=>{const a=Math.abs(n);return(n<0?'-':'')+(a>=1e6?(a/1e6).toFixed(1)+'M':a>=1e3?Math.round(a/1e3)+'k':Math.round(a))};
+let cal0=new Date(new Date().getFullYear(),new Date().getMonth(),1),DM={};
+function dayMap(){const m={};entries.forEach(e=>{const o=m[e.date]=m[e.date]||{net:0,w:0,l:0,n:0,dep:0,out:0};if(e.type==='win')o.w+=e.amount;if(e.type==='loss')o.l+=e.amount;o.net+=pl(e);if(e.res)o.n++;if(e.type==='deposit')o.dep+=e.amount;if(e.type==='cashout')o.out+=e.amount});return m}
+function renderOv(){DM=dayMap();const tdy=iso(0),wd=(new Date().getDay()+6)%7,wk=Array.from({length:wd+1},(_,i)=>iso(i)),mp=tdy.slice(0,7);
+const sm=ks=>ks.reduce((a,k)=>{const o=DM[k];if(o){a.net+=o.net;a.w+=o.w;a.l+=o.l;a.n+=o.n}return a},{net:0,w:0,l:0,n:0});
+$('#per').innerHTML=[['Today',sm([tdy])],['This week',sm(wk)],['This month',sm(Object.keys(DM).filter(k=>k.startsWith(mp)))]].map(([t,o])=>`<div><small>${t}</small><b class="${o.net>=0?'win':'loss'}">${money(o.net)}</b><small>Won ${money(o.w)} · Lost ${money(o.l)}<br>${o.n} rounds</small></div>`).join('');
+const y=cal0.getFullYear(),mo=cal0.getMonth(),first=(new Date(y,mo,1).getDay()+6)%7,days=new Date(y,mo+1,0).getDate();
+const mx=Math.max(1,...Array.from({length:days},(_,i)=>Math.abs((DM[ds(y,mo,i+1)]||{}).net||0)));
+$('#cm').textContent=cal0.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+let h=['Mo','Tu','We','Th','Fr','Sa','Su'].map(x=>`<div class="h">${x}</div>`).join('')+'<div class="d e0"></div>'.repeat(first);
+for(let i=1;i<=days;i++){const k=ds(y,mo,i),o=DM[k],bg=o&&o.net!==0?`background:color-mix(in srgb,var(--${o.net>0?'win':'loss'}) ${15+Math.round(Math.abs(o.net)/mx*55)}%,var(--p2))`:'';
+h+=`<div class="d${k===tdy?' to':''}" data-k="${k}" style="${bg}"><span>${i}</span>${o&&(o.w||o.l)?`<b>${cmp(o.net)}</b>`:''}</div>`}
+$('#cal').innerHTML=h;
+const act=Object.entries(DM).filter(([k,o])=>o.w||o.l).sort((a,b)=>a[0]<b[0]?-1:1);
+if(!act.length){$('#fun').innerHTML='<small>Play a round to see highlights.</small>';return}
+const bt=act.reduce((a,b)=>b[1].net>a[1].net?b:a),ws=act.reduce((a,b)=>b[1].net<a[1].net?b:a),gr=act.filter(x=>x[1].net>0).length;
+let cur=0,lg=0,run=0;act.forEach(x=>{run=x[1].net>0?run+1:0;lg=Math.max(lg,run)});for(let i=act.length-1;i>=0&&act[i][1].net>0;i--)cur++;
+const wdn=[0,0,0,0,0,0,0];act.forEach(([k,o])=>wdn[(new Date(k+'T00:00').getDay()+6)%7]+=o.net);const wm=Math.max(1,...wdn.map(Math.abs));
+const dl=k=>new Date(k+'T00:00').toLocaleDateString(undefined,{day:'numeric',month:'short'}),tgf=k=>[0,6].includes(new Date(k+'T00:00').getDay())?cfg.we:cfg.wk;
+$('#fun').innerHTML=`<div class="fn"><div><small>Best day</small><b class="win">${money(bt[1].net)}</b><small>${dl(bt[0])}</small></div><div><small>Worst day</small><b class="loss">${money(ws[1].net)}</b><small>${dl(ws[0])}</small></div><div><small>Green days</small><b>${gr} of ${act.length}</b><small>${Math.round(gr/act.length*100)}% of days</small></div><div><small>Average per day</small><b>${money(act.reduce((a,x)=>a+x[1].net,0)/act.length)}</b><small>active days</small></div><div><small>Green streak now</small><b>${cur} 🔥</b><small>longest ${lg}</small></div><div><small>Target days hit</small><b>${act.filter(([k,o])=>o.net>=tgf(k)).length}</b><small>of ${act.length}</small></div></div><h2>Net by weekday</h2><div class="bars">`+['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((n,i)=>`<div><span>${n}</span><span><i style="width:${Math.abs(wdn[i])/wm*100}%;background:var(--${wdn[i]>=0?'win':'loss'})"></i></span><span class="${wdn[i]>=0?'win':'loss'}" style="text-align:right">${money(wdn[i])}</span></div>`).join('')+'</div>'}
+function tip(k,ev){const o=DM[k],t=$('#tip'),dt=new Date(k+'T00:00'),tg=[0,6].includes(dt.getDay())?cfg.we:cfg.wk;
+t.innerHTML=`<b>${dt.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'short'})}</b><br>`+(o?`Net: ${money(o.net)}<br>Won ${money(o.w)} · Lost ${money(o.l)}<br>Rounds: ${o.n}<br>Deposits ${money(o.dep)} · Cash out ${money(o.out)}<br>${o.net>=tg?'Target hit':'Target '+money(tg)}`:'No activity');
+t.style.display='block';const r=ev.target.closest('.d').getBoundingClientRect(),w=t.offsetWidth,hh=t.offsetHeight;
+t.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2))+'px';t.style.top=(r.bottom+8+hh>innerHeight?r.top-hh-8:r.bottom+8)+'px'}
+$('#cal').onmouseover=e=>{const d=e.target.closest('.d[data-k]');if(d)tip(d.dataset.k,e)};
+$('#cal').onmouseleave=()=>$('#tip').style.display='none';
+$('#cal').onclick=e=>{const d=e.target.closest('.d[data-k]');if(d)tip(d.dataset.k,e)};
+$('#cp').onclick=()=>{cal0=new Date(cal0.getFullYear(),cal0.getMonth()-1,1);$('#tip').style.display='none';renderOv()};
+$('#cn').onclick=()=>{cal0=new Date(cal0.getFullYear(),cal0.getMonth()+1,1);$('#tip').style.display='none';renderOv()};
+let SHOE={DK:[],next:{H:.46,A:.46,D:.08},c:{},seen:0,N:10};
+function inSess(e){return tsOf(e)>=(cfg.tstart||0)}
+function fullC(N){const c={};RK.forEach(r=>c[r]=4*N);return c}
+function dkDist(c){const N=RK.reduce((a,r)=>a+c[r],0),o={H:0,A:0,D:0};if(N<2)return{H:.46,A:.46,D:.08};
+RK.forEach(r=>RK.forEach(s=>{o[outc(r,s)]+=r===s?c[r]*(c[r]-1):c[r]*c[s]}));return nz(o)}
+function shoe(){const N=cfg.decks||1;let c=fullC(N),DK=[],seen=0;
+entries.filter(e=>(e.res||e.type==='shuffle')&&inSess(e)).sort((a,b)=>tsOf(a)-tsOf(b)).forEach(e=>{
+if(e.type==='shuffle'){c=fullC(N);seen=0;return}
+DK.push(dkDist(c));c[e.home]=Math.max(0,c[e.home]-1);c[e.away]=Math.max(0,c[e.away]-1);seen+=2;
+if(cfg.shuf==='round'){c=fullC(N);seen=0}});
+return{DK,c,seen,N,next:dkDist(c)}}
+function renderShoe(){const S=SHOE,tot=52*S.N,d=S.next,f=dkDist(fullC(S.N)),ev=cfg.shuf==='round',
+bar=(k,v)=>`<div class="pb"><span>${NM[k]}</span><span><i style="width:${Math.round(v*100)}%;background:var(--${k})"></i></span><span>${(v*100).toFixed(1)}%</span></div>`;
+$('#shoe').innerHTML=`<div class="row2"><div class="stat"><small>Decks in shoe</small><b>${S.N}</b><small>${tot} cards</small></div><div class="stat"><small>Cards left</small><b>${ev?'Fresh':tot-S.seen}</b><small>${ev?'shuffled each round':S.seen+' dealt'}</small></div></div>
+<h2 style="margin-top:14px">Odds from the cards left</h2>${['H','A','D'].map(k=>bar(k,d[k])).join('')}
+<small style="display:block">Draw chance now ${(d.D*100).toFixed(2)}% vs ${(f.D*100).toFixed(2)}% on a fresh shoe.</small>`+
+(ev?'<small style="display:block;margin-top:8px">Shuffle is set to every round, so these odds never change. Switch it in Settings if the table keeps one shoe.</small>':`<h2 style="margin-top:14px">Cards left by rank</h2><div class="ranks">${RK.map(r=>`<div>${r}<b>${S.c[r]}</b></div>`).join('')}</div><button class="btn o" id="nsh">New shoe (dealer reshuffled)</button>`)}
+const num=id=>parseFloat(String($(id).value).replace(/,/g,''));
+function commaIn(el){const pos=el.value.length-(el.selectionStart||0),p=el.value.replace(/[^0-9.]/g,'').split('.');let s=p[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');if(p.length>1)s+='.'+p.slice(1).join('');el.value=s;const np=Math.max(0,s.length-pos);try{el.setSelectionRange(np,np)}catch(e){}}
+document.addEventListener('input',e=>{if(e.target.classList&&e.target.classList.contains('mi'))commaIn(e.target)});
+let pstart=-1;try{pstart=+localStorage.getItem('ps')||-1}catch(e){}
+const sv=()=>{try{localStorage.setItem('ps',pstart)}catch(e){}},ST=[['freq','Recent frequency'],['fol','Follow the streak'],['brk','Break the streak'],['a1','After last result'],['a2','After last two results'],['pat','Pattern match'],['deck','Deck odds']];
+const seqNow=()=>entries.filter(e=>e.res&&inSess(e)).sort((a,b)=>tsOf(a)-tsOf(b)).map(e=>e.res),am=o=>['H','A','D'].reduce((x,k)=>o[k]>o[x]?k:x,'H');
+const nz=o=>{const s=o.H+o.A+o.D;return{H:o.H/s,A:o.A/s,D:o.D/s}};
+function nxt(q,k){const c={H:0,A:0,D:0};if(q.length<=k)return c;const key=q.slice(-k).join('');for(let i=k;i<q.length;i++)if(q.slice(i-k,i).join('')===key)c[q[i]]++;return c}
+function dist(id,q){const b={H:1,A:1,D:.4};q.slice(-30).forEach(x=>b[x]++);const p=nz(b),l=q[q.length-1],mix=c=>nz({H:c.H+3*p.H,A:c.A+3*p.A,D:c.D+3*p.D});
+if(id==='fol')return nz({...p,[l]:p[l]*1.6});if(id==='brk')return nz({...p,[l]:p[l]*.6});
+if(id==='a1')return mix(nxt(q,1));if(id==='a2')return mix(nxt(q,2));
+if(id==='pat'){for(let k=6;k>=2;k--){const c=nxt(q,k);if(c.H+c.A+c.D>0)return mix(c)}}return p}
+function sim(seq,st){const L=seq.length,P=ST.map(([id])=>seq.map((_,i)=>i<3?null:am(id==='deck'?SHOE.DK[i]:dist(id,seq.slice(0,i)))));
+const tr=ST.map(()=>0),ok=ST.map(()=>0),rec=[],log=[];let a=0,miss=0;
+for(let i=Math.max(st,3);i<L;i++){ST.forEach((_,j)=>{tr[j]++;if(P[j][i]===seq[i])ok[j]++});
+const pk=P[a][i],g=pk===seq[i];rec.push({pick:pk,act:seq[i],ok:g});miss=g?0:miss+1;
+if(miss>=2){let b=-1,bs=-1;ST.forEach((_,j)=>{if(j===a)return;let h=0,c=0;for(let k=Math.max(3,i-29);k<=i;k++){c++;if(P[j][k]===seq[k])h++}if(h/c>bs){bs=h/c;b=j}});
+log.push('After round '+(i+1)+': '+ST[a][1]+' → '+ST[b][1]);a=b;miss=0}}
+return{a,miss,next:ST[a][0]==='deck'?SHOE.next:dist(ST[a][0],seq),rec,tr,ok,log}}
+function pick(){if(hc&&ac&&!bet)return saveRound();render()}
+function renderPred(){SHOE=shoe();renderShoe();const seq=seqNow(),n=seq.length,pr=$('#pr'),sb=$('#sb');if(pstart>n)pstart=-1;$('#rcount').textContent=n+' rounds entered';
+if(pstart<0){pr.innerHTML=`<p class="empty">${n<10?'Enter at least 10 rounds ('+n+' so far), then press Predict. 20 or more gives it more to work with.':'Press Predict. Every round you add afterwards is scored against the last prediction, and the next one appears on its own.'}</p><button class="btn" id="predict" ${n<10?'disabled':''}>Predict</button>`;sb.innerHTML='<small>Scores appear after you press Predict.</small>';return}
+const S=sim(seq,pstart),a=S.a,d=S.next,pk=am(d);
+pr.innerHTML=`<div class="pk"><span class="c c${pk}">${pk}</span><div><div class="big">${NM[pk]} ${Math.round(d[pk]*100)}%</div><small>Using: ${ST[a][1]}${S.miss?' · '+S.miss+' miss in a row':''}</small></div></div>`+
+['H','A','D'].map(k=>`<div class="pb"><span>${NM[k]}</span><span><i style="width:${Math.round(d[k]*100)}%;background:var(--${k})"></i></span><span>${Math.round(d[k]*100)}%</span></div>`).join('')+
+`<div class="row2"><button class="btn o" data-use="${pk}">Bet this</button><button class="btn o" id="pstop">Stop predicting</button></div>`;
+const t=S.rec.length,r=S.rec.filter(x=>x.ok).length,z=t?(r/t-.462)/Math.sqrt(.462*.538/t):0;
+sb.innerHTML=`<div class="stats" style="grid-template-columns:repeat(4,1fr);margin:0 0 10px"><div class="stat"><small>Scored</small><b>${t}</b></div><div class="stat"><small>Right</small><b>${r}</b></div><div class="stat"><small>Hit rate</small><b>${t?Math.round(r/t*100)+'%':'-'}</b></div><div class="stat"><small>Plain guess</small><b>46%</b></div></div>
+<div class="note">${t<8?'Too few scored rounds to judge yet.':Math.abs(z)<2?'Hit rate is within normal luck of a plain Home or Away guess.':z>0?'Above a plain guess, but short runs swing a lot.':'Below a plain guess.'} Each round is a fresh shuffle.</div>
+<h2>Last predictions (pick → result)</h2><div class="lp">${S.rec.slice(-12).reverse().map(x=>`<span class="${x.ok?'ok':'no'}">${x.pick}→${x.act}</span>`).join('')||'<small>None yet</small>'}</div>
+<table class="tb"><tr><th>Strategy</th><th>Tries</th><th>Right</th><th>Hit</th></tr>${ST.map((s,j)=>`<tr class="${j==a?'on':''}"><td>${s[1]}</td><td>${S.tr[j]}</td><td>${S.ok[j]}</td><td>${S.tr[j]?Math.round(S.ok[j]/S.tr[j]*100)+'%':'-'}</td></tr>`).join('')}</table>
+<h2 style="margin-top:14px">Strategy changes</h2>${S.log.slice(-5).map(x=>`<small style="display:block">${x}</small>`).join('')||'<small>No changes yet.</small>'}`}
+$('#undo').onclick=async()=>{const r=entries.filter(e=>e.res).sort((a,b)=>tsOf(b)-tsOf(a))[0];if(r){await api('DELETE','entries/'+r._id);load()}};
+$('#clr').onclick=async()=>{await api('PUT','settings',{...cfg,tstart:Date.now()});pstart=-1;sv();toast('New day: table cleared. Your money records are kept.');load()};
+$('#d').value=iso(0);show(location.hash.slice(1)||'home');load();
+</script></body></html>
