@@ -36,6 +36,12 @@ async function main() {
       await col.insertOne(d);
       s.json(d);
     }));
+    app.put('/api/' + k + '/:id', wrap(async (q, s) => {
+      if (!ObjectId.isValid(q.params.id)) return s.status(400).json({ error: 'Bad id' });
+      const { _id, ...b } = q.body || {};
+      await col.updateOne({ _id: new ObjectId(q.params.id) }, { $set: b });
+      s.json({ ok: 1 });
+    }));
     app.delete('/api/' + k + '/:id', wrap(async (q, s) => {
       if (!ObjectId.isValid(q.params.id)) return s.status(400).json({ error: 'Bad id' });
       await col.deleteOne({ _id: new ObjectId(q.params.id) });

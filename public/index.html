@@ -10,10 +10,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-ap
 h1{font-size:1.05rem;margin:0;letter-spacing:.3px}
 h2{font-size:.75rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--mute);margin:0 0 12px;font-weight:600}
 header{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:4}
-.bar{max-width:1040px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px;justify-content:space-between}
+.bar{max-width:1360px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px;justify-content:space-between}
 nav{display:flex;gap:2px}nav button{background:none;border:0;color:var(--mute);font:inherit;font-weight:600;padding:8px 14px;border-radius:8px;cursor:pointer}
 nav button.on{background:var(--p2);color:var(--ink)}nav i{display:none;font-style:normal}
-.wrap{max-width:1040px;margin:0 auto;padding:16px}.pg{display:none}.pg.on{display:block}
+.wrap{max-width:1360px;margin:0 auto;padding:16px}.pg{display:none}.pg.on{display:block}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
 .two{display:grid;gap:14px}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
 @media(min-width:860px){.stats{grid-template-columns:repeat(4,1fr)}.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
@@ -49,7 +49,10 @@ button.x{background:none;border:0;color:var(--mute);cursor:pointer;font-size:1re
 #tip{position:fixed;z-index:8;pointer-events:none;background:var(--ink);color:var(--bg);padding:10px 12px;border-radius:10px;font-size:.82rem;line-height:1.5;max-width:240px;display:none;box-shadow:0 6px 24px #0006}
 .bars div{display:grid;grid-template-columns:34px 1fr 110px;gap:8px;align-items:center;font-size:.8rem;margin:4px 0}.bars i{display:block;height:8px;border-radius:9px}
 .fn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}.fn div{background:var(--p2);border-radius:10px;padding:8px 10px}.fn small{display:block}.fn b{font-variant-numeric:tabular-nums}
-@media(max-width:520px){.per{grid-template-columns:1fr}}.pk{display:flex;align-items:center;gap:14px;margin-bottom:12px}.pk .c{width:64px;aspect-ratio:1;font-size:1.6rem;border-radius:12px}
+@media(max-width:520px){.per{grid-template-columns:1fr}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.chips button{font:inherit;font-size:.85rem;color:var(--mute);background:var(--p2);border:1px solid var(--line);border-radius:99px;padding:5px 12px;cursor:pointer}.chips button.on{background:var(--acc);border-color:var(--acc);color:var(--accink)}
+.lg{display:grid;gap:14px}.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}.gg .card{margin:0}.gcard.done{border-color:var(--win)}.gcard .big{font-size:1.6rem}
+@media(min-width:900px){.lg{grid-template-columns:360px minmax(0,1fr);align-items:start}.sticky{position:sticky;top:76px}}.pk{display:flex;align-items:center;gap:14px;margin-bottom:12px}.pk .c{width:64px;aspect-ratio:1;font-size:1.6rem;border-radius:12px}
 .pb{display:grid;grid-template-columns:60px 1fr 44px;gap:8px;align-items:center;font-size:.85rem;margin:4px 0}.pb i{display:block;height:8px;border-radius:9px}.pb span:last-child{text-align:right}
 .tb{width:100%;border-collapse:collapse;font-size:.85rem}.tb th,.tb td{padding:6px 4px;text-align:right;border-top:1px solid var(--line)}.tb th:first-child,.tb td:first-child{text-align:left}.tb th{color:var(--mute);font-weight:600;border:0}.tb tr.on td:first-child{color:var(--acc);font-weight:700}
 .note{background:var(--p2);border-radius:8px;padding:10px;font-size:.82rem;margin:10px 0}.lp{display:flex;gap:4px;flex-wrap:wrap;margin:6px 0 14px}.lp span{padding:2px 8px;border-radius:99px;font-size:.75rem;background:var(--p2)}.lp .ok{color:var(--win)}.lp .no{color:var(--loss)}
@@ -99,17 +102,18 @@ body.share .wrap{padding-bottom:16px}body.share .sp b{font-size:2.6rem}body.shar
 <small style="display:block;margin-top:12px">Each round is a fresh shuffle, so streaks and counts describe the past only.</small></div>
 <div class="card"><h2>Scoreboard</h2><div id="sb"></div></div></div></section>
 
-<section class="pg" id="p-ledger"><div class="two"><div class="card"><h2>Deposit, cash out or adjustment</h2>
+<section class="pg" id="p-ledger"><div class="stats" id="lsum"></div><div class="lg"><div class="card sticky"><h2>New entry</h2>
 <div class="row2"><div><label for="d">Date</label><input id="d" type="date"></div><div><label for="w">Who</label><select id="w"><option>Me</option><option>Wife</option></select></div></div>
 <div class="row2"><div><label for="t">Type</label><select id="t"><option value="deposit">Deposit to account</option><option value="cashout">Cash out</option><option value="win">Win</option><option value="loss">Loss</option></select></div>
 <div><label for="a">Amount (G$)</label><input id="a" class="mi" type="text" inputmode="decimal" autocomplete="off"></div></div>
 <div id="gw" hidden><label for="g">Cash out toward goal</label><select id="g"></select></div>
 <label for="n">Note</label><textarea id="n" rows="2" placeholder="Anything to remember"></textarea><button class="btn" id="add">Save entry</button></div>
-<div class="card"><h2>Daily log</h2><div id="log"></div></div></div></section>
+<div class="card"><div class="ch"><h2 style="margin:0">Transactions</h2><select id="lp" style="width:auto"><option value="all">All time</option><option value="today">Today</option><option value="week">This week</option><option value="month">This month</option></select></div>
+<div class="chips"><button data-lf="all">All</button><button data-lf="deposit">Deposits</button><button data-lf="cashout">Cash outs</button><button data-lf="win">Wins</button><button data-lf="loss">Losses</button><button data-lf="round">Rounds</button></div><div id="log"></div></div></div></section>
 
-<section class="pg" id="p-goals"><div class="card"><h2>Goals</h2><div id="goals"></div>
+<section class="pg" id="p-goals"><div class="stats" id="gsum"></div><div class="lg"><div class="card sticky"><h2>New goal</h2>
 <div class="row2"><div><label for="gn">New goal</label><input id="gn" placeholder="House deposit"></div><div><label for="gt">Target (G$)</label><input id="gt" class="mi" type="text" inputmode="decimal" autocomplete="off"></div></div>
-<button class="btn" id="addg">Add goal</button></div></section>
+<button class="btn" id="addg">Add goal</button></div><div><h2>Active goals</h2><div class="gg" id="goals"></div><h2 style="margin-top:20px">Completed goals</h2><div class="gg" id="gdone"></div></div></div></section>
 
 <section class="pg" id="p-set"><div class="card"><h2>Settings</h2>
 <label for="s1">Total to reach (G$)</label><input id="s1" class="mi" type="text" inputmode="decimal">
@@ -139,7 +143,7 @@ for(let i=0;i<36;i++){const b=r()<.5?'HAD'[Math.floor(r()*2.2)]:'';entries.push(
 entries.push({_id:'e1',date:iso(1),ts:1,who:'Me',type:'deposit',amount:500000,note:'First top-up'},{_id:'e2',date:iso(1),ts:2,who:'Wife',type:'cashout',amount:150000,goalId:'g1',note:'Sent to bank'})}
 function local(m,p,b){const[k,id]=p.split('/');if(k==='settings'){if(m==='PUT')cfg={...b};return cfg}
 const L=k==='goals'?goals:entries;if(m==='GET')return L;if(m==='POST'){L.push({...b,_id:'d'+Math.random().toString(36).slice(2)});return{}}
-const i=L.findIndex(y=>y._id===id);if(i>-1)L.splice(i,1);return{}}
+const i=L.findIndex(y=>y._id===id);if(m==='PUT'){if(i>-1)Object.assign(L[i],b);return{}}if(i>-1)L.splice(i,1);return{}}
 async function api(m,p,b){if(!demo){try{const r=await fetch('/api/'+p,{method:m,headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined});
 if(!r.ok||!(r.headers.get('content-type')||'').includes('json'))throw 0;return await r.json()}catch(e){if(m!=='GET')throw e;demo=true;seed();$('#demo').hidden=false}}return local(m,p,b)}
 async function load(){goals=await api('GET','goals');entries=await api('GET','entries');const c=await api('GET','settings');cfg={...D,...c};delete cfg._id;render()}
@@ -169,10 +173,19 @@ let run=0;for(const e of R){if(e.res===R[0].res)run++;else break}
 const sd=R.findIndex(e=>e.res==='D'),sh=R.findIndex(e=>e.res==='H'),sa=R.findIndex(e=>e.res==='A'),g=i=>i<0?'none in window':i+' rounds ago';
 $('#stk').innerHTML=R.length?`<small>Current: <b style="color:var(--ink)">${run} in a row of ${NM[R[0].res]}</b><br>Last Home: ${g(sh)} · Last Away: ${g(sa)} · Last Draw: ${g(sd)}</small>`:'<small>No rounds in this window</small>';
 $('#s1').value=cfg.total.toLocaleString();$('#s2').value=cfg.wk.toLocaleString();$('#s3').value=cfg.we.toLocaleString();$('#s4').value=cfg.draw;$('#s5').value=cfg.drawpay;$('#s6').value=cfg.ace;$('#s7').value=cfg.decks;$('#s8').value=cfg.shuf;
-$('#g').innerHTML=goals.map(x=>`<option value="${x._id}">${esc(x.name)}</option>`).join('')||'<option value="">No goal</option>';
+$('#g').innerHTML=goals.filter(x=>!x.done).map(x=>`<option value="${x._id}">${esc(x.name)}</option>`).join('')||'<option value="">No goal</option>';
 $('#goals').innerHTML=goals.map(x=>{const got=entries.filter(e=>e.type==='cashout'&&e.goalId===x._id).reduce((a,e)=>a+e.amount,0),p=Math.min(100,got/x.target*100||0);
 return`<div class="goal"><div class="gh"><b>${esc(x.name)}</b><button class="x" data-g="${x._id}" aria-label="Delete goal">✕</button></div><div class="track"><i style="width:${p}%"></i></div><small>${money(got)} of ${money(x.target)} (${p.toFixed(0)}%), ${money(Math.max(0,x.target-got))} to go</small></div>`}).join('')||'<p class="empty">Add your first goal below.</p>';
-const days={};entries.forEach(e=>(days[e.date]=days[e.date]||[]).push(e));const lab={win:'Win',loss:'Loss',deposit:'Deposit',cashout:'Cash out',round:'Round',shuffle:'Shuffle'};
+const gOf=x=>entries.filter(e=>e.type==='cashout'&&e.goalId===x._id),ga=goals.filter(x=>!x.done),gd=goals.filter(x=>x.done);
+const gc=x=>{const L=gOf(x),got=L.reduce((a,e)=>a+e.amount,0),p=Math.min(100,got/x.target*100||0),rc=L.sort((a,b)=>a.date<b.date?1:-1).slice(0,3).map(e=>`<small style="display:block">${e.date} · ${money(e.amount)}${e.note?' · '+esc(e.note):''}</small>`).join('');
+return`<div class="card gcard${x.done?' done':''}"><div class="gh"><b>${x.done?'🏆 ':''}${esc(x.name)}</b><button class="x" data-g="${x._id}" aria-label="Delete goal">✕</button></div><div class="big">${p.toFixed(0)}%</div><div class="track"><i style="width:${p}%"></i></div><small>${money(got)} of ${money(x.target)}${x.done?'':' · '+money(Math.max(0,x.target-got))+' to go'}</small>${x.done&&x.doneOn?`<small style="display:block">Completed ${esc(x.doneOn)}</small>`:''}<h2 style="margin:14px 0 4px">Recent cash outs</h2>${rc||'<small>None yet</small>'}<button class="btn ${x.done?'o':''}" data-gd="${x._id}" data-v="${x.done?0:1}">${x.done?'Reopen goal':got>=x.target?'🎉 Mark completed':'Mark completed'}</button></div>`};
+$('#goals').innerHTML=ga.map(gc).join('')||'<p class="empty">No active goals. Add one on the left.</p>';$('#gdone').innerHTML=gd.map(gc).join('')||'<p class="empty">Nothing completed yet.</p>';
+const gt2=ga.reduce((a,x)=>a+x.target,0),gs2=ga.reduce((a,x)=>a+gOf(x).reduce((b,e)=>b+e.amount,0),0);
+$('#gsum').innerHTML=[['Active goals',ga.length,1],['Completed',gd.length,1],['Saved toward active',gs2],['Still to go',Math.max(0,gt2-gs2)]].map(([l,v,c])=>`<div class="stat"><small>${l}</small><b>${c?v:money(v)}</b></div>`).join('');
+document.querySelectorAll('[data-lf]').forEach(b=>b.classList.toggle('on',b.dataset.lf===lfT));
+const LE=entries.filter(e=>inP(e.date)),sm2=t=>LE.filter(e=>e.type===t).reduce((a,e)=>a+e.amount,0);
+$('#lsum').innerHTML=[['Deposited',sm2('deposit')],['Cashed out',sm2('cashout')],['Wins',sm2('win')],['Losses',sm2('loss')]].map(([l,v])=>`<div class="stat"><small>${l}</small><b>${money(v)}</b></div>`).join('');
+const days={};entries.filter(lf).forEach(e=>(days[e.date]=days[e.date]||[]).push(e));const lab={win:'Win',loss:'Loss',deposit:'Deposit',cashout:'Cash out',round:'Round',shuffle:'Shuffle'};
 $('#log').innerHTML=Object.keys(days).sort().reverse().map(d=>{const L=days[d].sort((a,b)=>tsOf(b)-tsOf(a)),nt=L.reduce((a,e)=>a+pl(e),0);
 return`<div class="day"><div class="dh"><span>${new Date(d+'T00:00').toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</span><span class="${nt>=0?'win':'loss'}">${money(nt)}</span></div>`+
 L.map(e=>{const gl=goals.find(x=>x._id===e.goalId),x=e.res?`Home ${e.home} v Away ${e.away}: ${NM[e.res]}${e.bet?' · bet '+NM[e.bet]+' '+money(e.stake):''}`:[e.who,gl?'→ '+gl.name:''].filter(Boolean).join(' · ');
@@ -184,6 +197,8 @@ $('#sh').onclick=()=>{const on=document.body.classList.toggle('share');$('#sh').
 document.addEventListener('click',async ev=>{const t=ev.target;
 if(t.dataset.h){hc=t.dataset.h;return pick()}if(t.dataset.a){ac=t.dataset.a;return pick()}
 if(t.id==='predict'){pstart=seqNow().length;sv();return render()}if(t.id==='pstop'){pstart=-1;sv();return render()}if(t.id==='nsh'){await api('POST','entries',{date:iso(0),ts:Date.now(),who:'Me',type:'shuffle',amount:0,note:'New shoe'});toast('New shoe: card count reset');return load()}if(t.dataset.use){bet=t.dataset.use;toast('Bet side set');return render()}
+if(t.dataset.lf){lfT=t.dataset.lf;return render()}
+const gb=t.closest('[data-gd]');if(gb){const on=gb.dataset.v==='1';await api('PUT','goals/'+gb.dataset.gd,{done:on,doneOn:on?iso(0):''});toast(on?'Goal completed!':'Goal reopened');return load()}
 if(t.closest('#sd')&&t.dataset.b!==undefined){bet=t.dataset.b;return render()}
 const b=t.closest('.x');if(!b)return;if(!b.dataset.arm){b.dataset.arm=1;b.textContent='Sure?';setTimeout(()=>{b.dataset.arm='';b.textContent='✕'},3000);return}await api('DELETE',b.dataset.e?'entries/'+b.dataset.e:'goals/'+b.dataset.g);load()});
 $('#save').onclick=saveRound;async function saveRound(){if(!hc||!ac)return toast('Pick both cards');const st=num('#rs')||0;
@@ -243,6 +258,10 @@ $('#shoe').innerHTML=`<div class="row2"><div class="stat"><small>Decks in shoe</
 const num=id=>parseFloat(String($(id).value).replace(/,/g,''));
 function commaIn(el){const pos=el.value.length-(el.selectionStart||0),p=el.value.replace(/[^0-9.]/g,'').split('.');let s=p[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');if(p.length>1)s+='.'+p.slice(1).join('');el.value=s;const np=Math.max(0,s.length-pos);try{el.setSelectionRange(np,np)}catch(e){}}
 document.addEventListener('input',e=>{if(e.target.classList&&e.target.classList.contains('mi'))commaIn(e.target)});
+let lfT='all',lfP='all';
+function inP(d){if(lfP==='all')return true;const t=iso(0);if(lfP==='today')return d===t;if(lfP==='month')return d.slice(0,7)===t.slice(0,7);return d>=iso((new Date().getDay()+6)%7)}
+function lf(e){return inP(e.date)&&(lfT==='all'||(lfT==='round'?!!e.res:e.type===lfT))}
+$('#lp').onchange=()=>{lfP=$('#lp').value;render()};
 let pstart=-1;try{pstart=+localStorage.getItem('ps')||-1}catch(e){}
 const sv=()=>{try{localStorage.setItem('ps',pstart)}catch(e){}},ST=[['freq','Recent frequency'],['fol','Follow the streak'],['brk','Break the streak'],['a1','After last result'],['a2','After last two results'],['pat','Pattern match'],['deck','Deck odds']];
 const seqNow=()=>entries.filter(e=>e.res&&inSess(e)).sort((a,b)=>tsOf(a)-tsOf(b)).map(e=>e.res),am=o=>['H','A','D'].reduce((x,k)=>o[k]>o[x]?k:x,'H');
